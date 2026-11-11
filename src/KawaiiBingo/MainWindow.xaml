@@ -6,10 +6,14 @@
     Title="かわいいビンゴ">
     <Grid Background="#FFF4F6">
         <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
+            <RowDefinition x:Name="TitleBarRow" Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TitleBar x:Name="AppTitleBar" Title="かわいいビンゴ" Background="Transparent" />
         <ContentPresenter x:Name="PageHost" Grid.Row="1" />
+        <Grid.KeyboardAccelerators>
+            <KeyboardAccelerator Key="F11" Invoked="OnFullScreenAccelerator" />
+            <KeyboardAccelerator Key="Escape" Invoked="OnExitFullScreenAccelerator" />
+        </Grid.KeyboardAccelerators>
     </Grid>
 </Window>

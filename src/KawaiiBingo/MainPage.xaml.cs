@@ -1,5 +1,7 @@
+using KawaiiBingo.Layout;
 using KawaiiBingo.ViewModels;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -38,12 +40,16 @@ public sealed partial class MainPage : Page
     /// <summary>画面に対応する状態を取得します。</summary>
     public MainViewModel ViewModel { get; }
 
+    /// <summary>全画面表示の切り替えが要求されたときに発生します。</summary>
+    public event EventHandler? FullScreenRequested;
+
     /// <summary>画面を作成します。</summary>
     /// <param name="viewModel">画面の状態と操作です。</param>
     public MainPage(MainViewModel viewModel)
     {
         ViewModel = viewModel;
         InitializeComponent();
+        InitializeNumberBoard();
         Loaded += OnLoaded;
         ViewModel.Revealed += OnRevealed;
         ViewModel.EffectRequested += OnEffectRequested;
@@ -53,6 +59,93 @@ public sealed partial class MainPage : Page
     /// <param name="sender">イベントの送信元です。</param>
     /// <param name="args">イベントの情報です。</param>
     private async void OnLoaded(object sender, RoutedEventArgs args) => await ViewModel.InitializeAsync();
+
+    /// <summary>番号と見出しを、表示領域全体に広がる均等なマスへ配置します。</summary>
+    private void InitializeNumberBoard()
+    {
+        var letterTemplate = (DataTemplate)Resources["BoardLetterTemplate"];
+        var numberTemplate = (DataTemplate)Resources["BoardNumberTemplate"];
+        var columnCount = ViewModel.Rows[0].Cells.Count + 1;
+        for (var column = 0; column < columnCount; column++)
+        {
+            NumberBoard.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        }
+
+        for (var row = 0; row < ViewModel.Rows.Count; row++)
+        {
+            NumberBoard.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            AddBoardItem(ViewModel.Rows[row], letterTemplate, row, 0);
+            for (var column = 0; column < ViewModel.Rows[row].Cells.Count; column++)
+            {
+                AddBoardItem(ViewModel.Rows[row].Cells[column], numberTemplate, row, column + 1);
+            }
+        }
+    }
+
+    /// <summary>指定されたマスに、見出しまたは番号の表示を追加します。</summary>
+    /// <param name="item">表示する画面モデルです。</param>
+    /// <param name="template">表示に使うテンプレートです。</param>
+    /// <param name="row">表示する行です。</param>
+    /// <param name="column">表示する列です。</param>
+    private void AddBoardItem(object item, DataTemplate template, int row, int column)
+    {
+        var presenter = new ContentPresenter
+        {
+            Content = item,
+            ContentTemplate = template,
+            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+            VerticalContentAlignment = VerticalAlignment.Stretch
+        };
+        Grid.SetRow(presenter, row);
+        Grid.SetColumn(presenter, column);
+        NumberBoard.Children.Add(presenter);
+    }
+
+    /// <summary>ウィンドウの変更に合わせて画面全体の拡大率と配置を更新します。</summary>
+    /// <param name="sender">表示領域です。</param>
+    /// <param name="args">変更後のサイズです。</param>
+    private void OnViewportSizeChanged(object sender, SizeChangedEventArgs args) => UpdateResponsiveLayout();
+
+    /// <summary>エラーが表示された場合も操作部の領域を確保します。</summary>
+    /// <param name="sender">エラー表示です。</param>
+    /// <param name="args">変更後のサイズです。</param>
+    private void OnErrorPanelSizeChanged(object sender, SizeChangedEventArgs args) => UpdateResponsiveLayout();
+
+    /// <summary>余白だけを増やさず、文字や演出を同じ倍率で拡大して表示領域を使います。</summary>
+    private void UpdateResponsiveLayout()
+    {
+        if (LayoutViewport.ActualWidth <= 0 || LayoutViewport.ActualHeight <= 0)
+        {
+            return;
+        }
+
+        var errorHeight = ErrorPanel.Visibility == Visibility.Visible ? ErrorPanel.ActualHeight + 14 : 0;
+        var layout = BingoLayout.Fit(LayoutViewport.ActualWidth, LayoutViewport.ActualHeight, errorHeight);
+        ContentSurface.Width = layout.Width;
+        ContentSurface.Height = layout.Height;
+        StageColumn.Width = new GridLength(1, GridUnitType.Star);
+        BoardColumn.Width = layout.IsWide ? new GridLength(2.15, GridUnitType.Star) : new GridLength(0);
+        StageRow.Height = new GridLength(layout.IsWide ? 1 : 1.1, GridUnitType.Star);
+        BoardRow.Height = layout.IsWide ? new GridLength(0) : new GridLength(1, GridUnitType.Star);
+        MainContent.ColumnSpacing = layout.IsWide ? 20 : 0;
+        MainContent.RowSpacing = layout.IsWide ? 0 : 16;
+        Grid.SetRow(BoardPanel, layout.IsWide ? 0 : 1);
+        Grid.SetColumn(BoardPanel, layout.IsWide ? 1 : 0);
+    }
+
+    /// <summary>全画面表示の切り替えをウィンドウに要求します。</summary>
+    /// <param name="sender">全画面ボタンです。</param>
+    /// <param name="args">クリックの情報です。</param>
+    private void OnFullScreenClick(object sender, RoutedEventArgs args) => FullScreenRequested?.Invoke(this, EventArgs.Empty);
+
+    /// <summary>全画面ボタンの案内を現在の表示状態に合わせます。</summary>
+    /// <param name="isFullScreen">全画面表示中かどうかです。</param>
+    public void SetFullScreenState(bool isFullScreen)
+    {
+        FullScreenLabel.Text = isFullScreen ? "全画面を終了" : "全画面";
+        FullScreenIcon.Glyph = isFullScreen ? "\uE73F" : "\uE740";
+        AutomationProperties.SetName(FullScreenButton, FullScreenLabel.Text);
+    }
 
     /// <summary>新しい番号が決まったときに読み上げを行います。</summary>
     /// <param name="sender">イベントの送信元です。</param>
