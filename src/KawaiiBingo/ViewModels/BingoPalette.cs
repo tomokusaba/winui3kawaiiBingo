@@ -39,6 +39,12 @@ internal static class BingoPalette
     /// <summary>最新のセルの枠色です。</summary>
     public static SolidColorBrush LatestBorder { get; } = Brush(0xE5, 0x5C, 0x8B);
 
+    /// <summary>抽選演出でスポットライトが当たったセルの背景色です。</summary>
+    public static SolidColorBrush SpotlightBackground { get; } = Brush(0xFF, 0xF3, 0xB8);
+
+    /// <summary>抽選演出でスポットライトが当たったセルの枠色です。</summary>
+    public static SolidColorBrush SpotlightBorder { get; } = Brush(0xF2, 0xA9, 0x2E);
+
     /// <summary>番号に対応するアルファベットを返します。</summary>
     /// <param name="number">ビンゴの番号です。</param>
     /// <returns>対応するアルファベットです。</returns>
@@ -72,3 +78,4 @@ internal static class BingoPalette
     private static SolidColorBrush Brush(byte red, byte green, byte blue) =>
         new(Color.FromArgb(255, red, green, blue));
 }
+

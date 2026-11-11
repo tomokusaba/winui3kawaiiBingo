@@ -27,15 +27,121 @@
             <Setter Property="FontFamily" Value="{StaticResource CuteJapaneseFont}" />
             <Setter Property="FontSize" Value="13" />
         </Style>
+        <Storyboard x:Name="TickStoryboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="ScaleY">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.93" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.12" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction><BackEase Amplitude="0.6" EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="ScaleX">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1.05" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.12" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction><BackEase Amplitude="0.6" EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="FakeStopStoryboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="Rotation">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.14" Value="-9" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.30" Value="6" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.46" Value="-3" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.62" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimation Storyboard.TargetName="DecoyBadge" Storyboard.TargetProperty="Opacity"
+                             From="0" To="1" Duration="0:0:0.2" />
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecoyBadgeTransform" Storyboard.TargetProperty="ScaleX">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.4" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction><BackEase Amplitude="0.8" EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecoyBadgeTransform" Storyboard.TargetProperty="ScaleY">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.4" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction><BackEase Amplitude="0.8" EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="SneakStoryboard">
+            <DoubleAnimation Storyboard.TargetName="DecoyBadge" Storyboard.TargetProperty="Opacity"
+                             To="0" Duration="0:0:0.25" />
+            <DoubleAnimation Storyboard.TargetName="BunnyEyes" Storyboard.TargetProperty="X"
+                             To="-6" Duration="0:0:0.18" />
+            <DoubleAnimation Storyboard.TargetName="BunnySweat" Storyboard.TargetProperty="Opacity"
+                             To="1" Duration="0:0:0.2" />
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BunnySweatShift" Storyboard.TargetProperty="Y"
+                                           RepeatBehavior="Forever">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.6" Value="7" />
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.6" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimation Storyboard.TargetName="SneakyPaw" Storyboard.TargetProperty="Opacity"
+                             To="1" Duration="0:0:0.25" />
+            <DoubleAnimation Storyboard.TargetName="SneakyPawShift" Storyboard.TargetProperty="X"
+                             From="60" To="0" Duration="0:0:0.45">
+                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Name="NudgeStoryboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="TranslateX">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.08" Value="-14" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.26" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction><ElasticEase Oscillations="2" Springiness="4" EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="Rotation">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.08" Value="-7" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.26" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SneakyPawShift" Storyboard.TargetProperty="X">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.08" Value="-22" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.26" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
         <Storyboard x:Name="RevealStoryboard">
-            <DoubleAnimation Storyboard.TargetName="BallScale" Storyboard.TargetProperty="ScaleX"
-                             From="0.88" To="1" Duration="0:0:0.35">
-                <DoubleAnimation.EasingFunction><BackEase Amplitude="0.5" EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="ScaleX">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.7" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction><ElasticEase Oscillations="2" Springiness="5" EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="ScaleY">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.7" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction><ElasticEase Oscillations="2" Springiness="5" EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimation Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="Rotation"
+                             To="0" Duration="0:0:0.2" />
+            <DoubleAnimation Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="TranslateX"
+                             To="0" Duration="0:0:0.2" />
+            <DoubleAnimation Storyboard.TargetName="HaloRing" Storyboard.TargetProperty="Opacity"
+                             From="0.9" To="0" Duration="0:0:0.7" />
+            <DoubleAnimation Storyboard.TargetName="HaloScale" Storyboard.TargetProperty="ScaleX"
+                             From="0.8" To="1.35" Duration="0:0:0.7">
+                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
             </DoubleAnimation>
-            <DoubleAnimation Storyboard.TargetName="BallScale" Storyboard.TargetProperty="ScaleY"
-                             From="0.88" To="1" Duration="0:0:0.35">
-                <DoubleAnimation.EasingFunction><BackEase Amplitude="0.5" EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+            <DoubleAnimation Storyboard.TargetName="HaloScale" Storyboard.TargetProperty="ScaleY"
+                             From="0.8" To="1.35" Duration="0:0:0.7">
+                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
             </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="DecoyBadge" Storyboard.TargetProperty="Opacity"
+                             To="0" Duration="0:0:0.1" />
+            <DoubleAnimation Storyboard.TargetName="SneakyPaw" Storyboard.TargetProperty="Opacity"
+                             To="0" Duration="0:0:0.2" />
+            <DoubleAnimation Storyboard.TargetName="BunnySweat" Storyboard.TargetProperty="Opacity"
+                             BeginTime="0:0:1.4" To="0" Duration="0:0:0.4" />
+            <DoubleAnimation Storyboard.TargetName="BunnyEyes" Storyboard.TargetProperty="X"
+                             BeginTime="0:0:1.4" To="0" Duration="0:0:0.3" />
+            <DoubleAnimation Storyboard.TargetName="Whistle" Storyboard.TargetProperty="Opacity"
+                             From="0" To="1" Duration="0:0:0.2" AutoReverse="True" RepeatBehavior="0:0:1.6" />
+            <DoubleAnimation Storyboard.TargetName="WhistleShift" Storyboard.TargetProperty="Y"
+                             From="4" To="-8" Duration="0:0:0.8" RepeatBehavior="2x" />
         </Storyboard>
     </Page.Resources>
 
@@ -142,16 +248,28 @@
                                     </Ellipse>
                                     <Ellipse Width="66" Height="56" Fill="White" Stroke="#EFB7C8" StrokeThickness="2"
                                              VerticalAlignment="Bottom" />
-                                    <Ellipse Width="5" Height="7" Fill="#65485B" HorizontalAlignment="Left"
-                                             VerticalAlignment="Bottom" Margin="22,0,0,26" />
-                                    <Ellipse Width="5" Height="7" Fill="#65485B" HorizontalAlignment="Right"
-                                             VerticalAlignment="Bottom" Margin="0,0,22,26" />
+                                    <Grid>
+                                        <Grid.RenderTransform><TranslateTransform x:Name="BunnyEyes" /></Grid.RenderTransform>
+                                        <Ellipse Width="5" Height="7" Fill="#65485B" HorizontalAlignment="Left"
+                                                 VerticalAlignment="Bottom" Margin="22,0,0,26" />
+                                        <Ellipse Width="5" Height="7" Fill="#65485B" HorizontalAlignment="Right"
+                                                 VerticalAlignment="Bottom" Margin="0,0,22,26" />
+                                    </Grid>
                                     <Ellipse Width="10" Height="6" Fill="#FFAFC6" HorizontalAlignment="Left"
                                              VerticalAlignment="Bottom" Margin="12,0,0,17" />
                                     <Ellipse Width="10" Height="6" Fill="#FFAFC6" HorizontalAlignment="Right"
                                              VerticalAlignment="Bottom" Margin="0,0,12,17" />
                                     <TextBlock Text="ᴗ" FontSize="18" Foreground="#A3637D"
                                                HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10" />
+                                    <Path x:Name="BunnySweat" Opacity="0" Fill="#9FD3F2" Stroke="#6FB6E2" StrokeThickness="1"
+                                          HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,1,34"
+                                          Data="M 6,0 C 6,0 12,8 12,12 A 6,6 0 1 1 0,12 C 0,8 6,0 6,0 Z">
+                                        <Path.RenderTransform><TranslateTransform x:Name="BunnySweatShift" /></Path.RenderTransform>
+                                    </Path>
+                                    <TextBlock x:Name="Whistle" Text="♪" Opacity="0" FontSize="17" Foreground="#E7759F"
+                                               HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-8,6">
+                                        <TextBlock.RenderTransform><TranslateTransform x:Name="WhistleShift" /></TextBlock.RenderTransform>
+                                    </TextBlock>
                                 </Grid>
                                 <Border Grid.Column="1" Background="#FFF1F5" CornerRadius="20,20,20,4"
                                         Padding="15,12" VerticalAlignment="Center">
@@ -168,9 +286,13 @@
                                            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="6,24,0,0" />
                                 <TextBlock Text="✦" FontSize="22" Foreground="#ED8FB3"
                                            HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,31" />
+                                <Ellipse x:Name="HaloRing" Width="240" Height="240" Opacity="0"
+                                         Stroke="#F7A8C4" StrokeThickness="6" RenderTransformOrigin="0.5,0.5">
+                                    <Ellipse.RenderTransform><ScaleTransform x:Name="HaloScale" /></Ellipse.RenderTransform>
+                                </Ellipse>
                                 <Grid Width="220" Height="220">
                                     <Grid.RenderTransform>
-                                        <ScaleTransform x:Name="BallScale" CenterX="110" CenterY="110" />
+                                        <CompositeTransform x:Name="BallTransform" CenterX="110" CenterY="110" />
                                     </Grid.RenderTransform>
                                     <Border Background="#EECBD4" CornerRadius="110" Margin="0,7,0,0" />
                                     <Border Background="{x:Bind ViewModel.CurrentBallBrush, Mode=OneWay}"
@@ -192,6 +314,33 @@
                                         </Grid>
                                     </Border>
                                 </Grid>
+                                <Border x:Name="DecoyBadge" Opacity="0" Background="#FFFFFF" BorderBrush="#F2A92E"
+                                        BorderThickness="2" CornerRadius="14" Padding="10,4"
+                                        HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-6,4,0,0"
+                                        RenderTransformOrigin="0.5,0.5" AutomationProperties.AccessibilityView="Raw">
+                                    <Border.RenderTransform>
+                                        <CompositeTransform x:Name="DecoyBadgeTransform" Rotation="-10" />
+                                    </Border.RenderTransform>
+                                    <TextBlock Text="けってい…？" FontFamily="{StaticResource CuteJapaneseFont}"
+                                               FontSize="13" Foreground="#9A6414" />
+                                </Border>
+                                <Grid x:Name="SneakyPaw" Opacity="0" Width="66" Height="66"
+                                      HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,-34,0"
+                                      AutomationProperties.AccessibilityView="Raw">
+                                    <Grid.RenderTransform><TranslateTransform x:Name="SneakyPawShift" /></Grid.RenderTransform>
+                                    <Ellipse Width="42" Height="38" Fill="White" Stroke="#EFB7C8" StrokeThickness="2"
+                                             HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,8" />
+                                    <Ellipse Width="14" Height="11" Fill="#FFB9CD"
+                                             HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,18,18" />
+                                    <Ellipse Width="8" Height="8" Fill="#FFB9CD"
+                                             HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,35,31" />
+                                    <Ellipse Width="8" Height="8" Fill="#FFB9CD"
+                                             HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,22,36" />
+                                    <Ellipse Width="8" Height="8" Fill="#FFB9CD"
+                                             HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,9,31" />
+                                </Grid>
+                                <Canvas x:Name="ConfettiLayer" Width="260" Height="260" IsHitTestVisible="False"
+                                        AutomationProperties.AccessibilityView="Raw" />
                             </Grid>
 
                             <TextBlock Text="いまの ばんごう" FontFamily="{StaticResource CuteJapaneseFont}"
@@ -202,6 +351,9 @@
                                 <Button.Resources>
                                     <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#F375A1" />
                                     <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#D94C7E" />
+                                    <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="#FAD3E1" />
+                                    <SolidColorBrush x:Key="ButtonForegroundDisabled" Color="#A0446B" />
+                                    <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="#EE9DBB" />
                                 </Button.Resources>
                                 <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
                                     <TextBlock Text="♥" FontSize="20" VerticalAlignment="Center" />
@@ -284,12 +436,18 @@
                                                                     Background="{x:Bind Background, Mode=OneWay}"
                                                                     BorderBrush="{x:Bind BorderBrush, Mode=OneWay}"
                                                                     BorderThickness="2" CornerRadius="12">
-                                                                <TextBlock Text="{x:Bind NumberText}"
-                                                                           AutomationProperties.Name="{x:Bind AutomationName, Mode=OneWay}"
-                                                                           Foreground="{x:Bind Foreground, Mode=OneWay}"
-                                                                           FontFamily="{StaticResource CuteNumberFont}" FontSize="18"
-                                                                           FontWeight="SemiBold" HorizontalAlignment="Center"
-                                                                           VerticalAlignment="Center" />
+                                                                <Grid>
+                                                                    <TextBlock Text="{x:Bind NumberText}"
+                                                                               AutomationProperties.Name="{x:Bind AutomationName, Mode=OneWay}"
+                                                                               Foreground="{x:Bind Foreground, Mode=OneWay}"
+                                                                               FontFamily="{StaticResource CuteNumberFont}" FontSize="18"
+                                                                               FontWeight="SemiBold" HorizontalAlignment="Center"
+                                                                               VerticalAlignment="Center" />
+                                                                    <TextBlock Text="♥" FontSize="11" Foreground="#E5578A"
+                                                                               HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                                               Margin="0,-3,-1,0" AutomationProperties.AccessibilityView="Raw"
+                                                                               Visibility="{x:Bind StampVisibility, Mode=OneWay}" />
+                                                                </Grid>
                                                             </Border>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
