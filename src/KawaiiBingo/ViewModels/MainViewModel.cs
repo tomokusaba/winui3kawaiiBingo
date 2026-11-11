@@ -30,6 +30,9 @@ public sealed class MainViewModel : ObservableObject
     /// <summary>読み込みが完了したかどうかです。</summary>
     private bool _isReady;
 
+    /// <summary>抽選の候補を演出として表示しているかどうかです。</summary>
+    private bool _isDrawing;
+
     /// <summary>抽選演出中にボタンへ表示する文字列です。演出中でない場合は null です。</summary>
     private string? _drawingButtonText;
 
@@ -86,9 +89,14 @@ public sealed class MainViewModel : ObservableObject
     public Brush CurrentBallBrush => BingoPalette.Ball(_displayNumber ?? 1);
 
     /// <summary>支援技術向けに現在の番号を取得します。</summary>
-    public string CurrentNumberDescription => _displayNumber is int number
-        ? $"現在の番号は {BingoPalette.Letter(number)} の {number} です"
-        : "まだ番号は抽選されていません";
+    public string CurrentNumberDescription => _isDrawing
+        ? "抽選演出中です。表示中の番号は確定結果ではありません。"
+        : _displayNumber is int number
+            ? $"現在の番号は {BingoPalette.Letter(number)} の {number} です"
+            : "まだ番号は抽選されていません";
+
+    /// <summary>抽選演出中と結果確定後で異なるボールの説明を取得します。</summary>
+    public string CurrentBallCaption => _isDrawing ? "えんしゅつ中… まだ ないしょ♡" : "いまの ばんごう";
 
     /// <summary>抽選済みの個数を表示する文字列を取得します。</summary>
     public string CountText => $"{_snapshot?.DrawnCount ?? 0} / 75";
@@ -193,7 +201,7 @@ public sealed class MainViewModel : ObservableObject
         }
     }
 
-    /// <summary>抽選演出のあとに番号を一つ抽選します。</summary>
+    /// <summary>番号を一つ抽選して保存し、その結果に合わせた演出を再生します。</summary>
     /// <returns>抽選の完了を表すタスクです。</returns>
     private async Task DrawAsync()
     {
@@ -203,74 +211,106 @@ public sealed class MainViewModel : ObservableObject
         }
 
         SetBusy(true);
+        SetDrawing(true);
         SetDrawButtonText("まぜまぜ…");
         ErrorMessage = string.Empty;
         Message = "まぜまぜ まぜまぜ…♪";
         var previous = _snapshot;
+        BingoSnapshot? saved = null;
         try
         {
             var candidates = previous.RemainingNumbers;
-            var snapshot = await _gameService.DrawAsync();
-            var winner = snapshot.LastNumber ?? throw new InvalidOperationException("抽選結果の番号がありません。");
+            saved = await _gameService.DrawAsync();
+            var winner = saved.LastNumber ?? throw new InvalidOperationException("抽選結果の番号がありません。");
 
             await PlayRiggedShowAsync(candidates, winner);
 
             SetSpotlight(null);
-            ApplySnapshot(snapshot);
-            Message = snapshot.IsComplete
+            SetDrawing(false);
+            ApplySnapshot(saved);
+            Message = saved.IsComplete
                 ? "ぜんぶ でたよ！ おめでとう！"
                 : $"{CurrentLetter} の {CurrentNumberText} が でたよ！ …ぐうぜん♡";
             RaiseEffect(DrawEffect.Reveal);
-            Revealed?.Invoke(this, EventArgs.Empty);
         }
         catch (Exception exception)
         {
             SetSpotlight(null);
-            ApplySnapshot(previous);
+            SetDrawing(false);
+            ApplySnapshot(saved ?? previous);
             RaiseEffect(DrawEffect.Cancel);
-            ReportError(exception);
+            if (saved is null)
+            {
+                ReportError(exception);
+            }
+            else
+            {
+                _logger.LogError(exception, "抽選演出を再生できませんでした。抽選結果は保存されています。");
+                Message = $"{CurrentLetter} の {CurrentNumberText} が でたよ！";
+                ErrorMessage = $"演出を再生できませんでした。抽選結果は保存されています。 ({exception.Message})";
+            }
         }
         finally
         {
+            SetDrawing(false);
             SetDrawButtonText(null);
             SetBusy(false);
         }
+
+        if (saved is not null)
+        {
+            try
+            {
+                Revealed?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "抽選結果の読み上げ通知を送信できませんでした。");
+                var notificationError = $"結果の読み上げ通知に失敗しました。抽選結果は保存されています。 ({exception.Message})";
+                ErrorMessage = string.IsNullOrEmpty(ErrorMessage) ? notificationError : $"{ErrorMessage} {notificationError}";
+            }
+        }
     }
 
-    /// <summary>ルーレット、おとりでの停止、こっそりずらす動きを順番に再生します。</summary>
+    /// <summary>ルーレットと、ランダムに選ばれたいたずら演出を順番に再生します。</summary>
     /// <param name="candidates">抽選前に残っていた番号です。</param>
     /// <param name="winner">実際に抽選された番号です。</param>
     /// <returns>演出の完了を表すタスクです。</returns>
     private async Task PlayRiggedShowAsync(IReadOnlyList<int> candidates, int winner)
     {
         var script = RiggedShowScript.Create(candidates, winner, Random.Shared);
-        if (script.Decoy is not int decoy)
+        RaiseEffect(DrawEffect.Begin);
+        await SpinAsync(candidates, 17, script.Decoy ?? winner);
+
+        if (script.Decoy is int decoy)
+        {
+            RaiseEffect(DrawEffect.FakeStop);
+            Message = $"{BingoPalette.Letter(decoy)} の {decoy} に けってい…？";
+            SetDrawButtonText("けってい…？");
+            await Task.Delay(750);
+        }
+        else
         {
             Message = "さいごの ひとつ…！";
-            await SpinAsync(candidates, 10, winner);
-            return;
+            await Task.Delay(350);
         }
 
-        await SpinAsync(candidates, 22, decoy);
-        RaiseEffect(DrawEffect.FakeStop);
-        Message = $"{BingoPalette.Letter(decoy)} の {decoy} に けってい…？";
-        SetDrawButtonText("けってい…？");
-        await Task.Delay(1100);
-
-        RaiseEffect(DrawEffect.SneakStart);
-        Message = "…あっ、ちょっと まってね。";
-        SetDrawButtonText("ないしょ…");
-        await Task.Delay(750);
-
-        Message = "ずりずり… ずりずり…";
-        for (var index = 0; index < script.NudgePath.Count; index++)
+        foreach (var step in script.Steps)
         {
-            var number = script.NudgePath[index];
-            SetDisplayNumber(number);
-            SetSpotlight(number);
-            RaiseEffect(DrawEffect.Nudge);
-            var isLast = index == script.NudgePath.Count - 1;
-            await Task.Delay(isLast ? 520 : 330);
+            Message = step.Message;
+            SetDrawButtonText(step.ButtonText);
+            if (step.Number is int number)
+            {
+                SetDisplayNumber(number);
+                SetSpotlight(number);
+            }
+
+            if (step.Effect is DrawEffect effect)
+            {
+                RaiseEffect(effect);
+            }
+
+            await Task.Delay(step.DurationMilliseconds);
         }
     }
 
@@ -288,8 +328,22 @@ public sealed class MainViewModel : ObservableObject
             SetSpotlight(number);
             RaiseEffect(DrawEffect.Tick);
             var progress = (double)step / steps;
-            await Task.Delay((int)(45 + 260 * progress * progress * progress));
+            await Task.Delay((int)(45 + 210 * progress * progress * progress));
         }
+    }
+
+    /// <summary>演出中の番号と確定済みの番号を区別して表示します。</summary>
+    /// <param name="isDrawing">抽選演出中の場合は真です。</param>
+    private void SetDrawing(bool isDrawing)
+    {
+        if (_isDrawing == isDrawing)
+        {
+            return;
+        }
+
+        _isDrawing = isDrawing;
+        OnPropertyChanged(nameof(CurrentBallCaption));
+        OnPropertyChanged(nameof(CurrentNumberDescription));
     }
 
     /// <summary>指定した番号のセルだけにスポットライトを当てます。</summary>

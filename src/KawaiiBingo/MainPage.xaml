@@ -72,7 +72,7 @@
             <DoubleAnimation Storyboard.TargetName="BunnySweat" Storyboard.TargetProperty="Opacity"
                              To="1" Duration="0:0:0.2" />
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BunnySweatShift" Storyboard.TargetProperty="Y"
-                                           RepeatBehavior="Forever">
+                                           RepeatBehavior="3x">
                 <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
                 <LinearDoubleKeyFrame KeyTime="0:0:0.6" Value="7" />
                 <DiscreteDoubleKeyFrame KeyTime="0:0:0.6" Value="0" />
@@ -339,11 +339,33 @@
                                     <Ellipse Width="8" Height="8" Fill="#FFB9CD"
                                              HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,9,31" />
                                 </Grid>
+                                <Grid Width="260" Height="260" IsHitTestVisible="False"
+                                      AutomationProperties.AccessibilityView="Raw">
+                                    <Path x:Name="TrickBeam" Opacity="0" Fill="#A9E9F7"
+                                          Data="M 75,18 L 185,18 L 236,235 L 24,235 Z" />
+                                    <Ellipse x:Name="TrickRing" Width="242" Height="242" Opacity="0"
+                                             Stroke="#F3A8BF" StrokeThickness="6" RenderTransformOrigin="0.5,0.5">
+                                        <Ellipse.RenderTransform><ScaleTransform x:Name="TrickRingScale" /></Ellipse.RenderTransform>
+                                    </Ellipse>
+                                    <TextBlock x:Name="TrickSymbol" Opacity="0" FontFamily="Segoe UI Emoji"
+                                               FontSize="76" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               RenderTransformOrigin="0.5,0.5">
+                                        <TextBlock.RenderTransform><CompositeTransform x:Name="TrickSymbolTransform" /></TextBlock.RenderTransform>
+                                    </TextBlock>
+                                    <Border x:Name="TrickBadge" Opacity="0" Background="#FFFFFCFD"
+                                            BorderBrush="#E9A3BD" BorderThickness="2" CornerRadius="14"
+                                            Padding="10,4" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                            Margin="0,3,-12,0" RenderTransformOrigin="0.5,0.5">
+                                        <Border.RenderTransform><ScaleTransform x:Name="TrickBadgeScale" /></Border.RenderTransform>
+                                        <TextBlock x:Name="TrickBadgeText" FontFamily="{StaticResource CuteJapaneseFont}"
+                                                   FontSize="11" Foreground="#8A4364" />
+                                    </Border>
+                                </Grid>
                                 <Canvas x:Name="ConfettiLayer" Width="260" Height="260" IsHitTestVisible="False"
                                         AutomationProperties.AccessibilityView="Raw" />
                             </Grid>
 
-                            <TextBlock Text="いまの ばんごう" FontFamily="{StaticResource CuteJapaneseFont}"
+                            <TextBlock Text="{x:Bind ViewModel.CurrentBallCaption, Mode=OneWay}" FontFamily="{StaticResource CuteJapaneseFont}"
                                        FontSize="13" Foreground="#79596D" HorizontalAlignment="Center" Margin="0,-10,0,0" />
                             <Button Command="{x:Bind ViewModel.DrawCommand}" Style="{StaticResource DrawButtonStyle}"
                                     HorizontalAlignment="Stretch" MinHeight="64"
