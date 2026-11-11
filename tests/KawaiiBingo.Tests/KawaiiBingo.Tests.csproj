@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\KawaiiBingo\Layout\BingoLayout.cs" Link="Presentation\BingoLayout.cs" />
+    <Compile Include="..\..\src\KawaiiBingo\ViewModels\DrawEffect.cs" Link="Presentation\DrawEffect.cs" />
+    <Compile Include="..\..\src\KawaiiBingo\ViewModels\RiggedShowScript.cs" Link="Presentation\RiggedShowScript.cs" />
+    <ProjectReference Include="..\..\src\KawaiiBingo.Infrastructure\KawaiiBingo.Infrastructure.csproj" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="MSTest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+</Project>

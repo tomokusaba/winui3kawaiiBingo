@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="src/KawaiiBingo.Domain/KawaiiBingo.Domain.csproj" />
+  <Project Path="src/KawaiiBingo.Infrastructure/KawaiiBingo.Infrastructure.csproj" />
+  <Project Path="src/KawaiiBingo.UseCases/KawaiiBingo.UseCases.csproj" />
+  <Project Path="src/KawaiiBingo/KawaiiBingo.csproj" />
+  <Project Path="tests/KawaiiBingo.Tests/KawaiiBingo.Tests.csproj" />
+</Solution>
