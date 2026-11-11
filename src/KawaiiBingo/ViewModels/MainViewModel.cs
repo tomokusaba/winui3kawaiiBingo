@@ -280,20 +280,7 @@ public sealed class MainViewModel : ObservableObject
     {
         var script = RiggedShowScript.Create(candidates, winner, Random.Shared);
         RaiseEffect(DrawEffect.Begin);
-        await SpinAsync(candidates, 17, script.Decoy ?? winner);
-
-        if (script.Decoy is int decoy)
-        {
-            RaiseEffect(DrawEffect.FakeStop);
-            Message = $"{BingoPalette.Letter(decoy)} の {decoy} に けってい…？";
-            SetDrawButtonText("けってい…？");
-            await Task.Delay(750);
-        }
-        else
-        {
-            Message = "さいごの ひとつ…！";
-            await Task.Delay(350);
-        }
+        await SpinAsync(candidates, 19, script.FirstStop);
 
         foreach (var step in script.Steps)
         {
@@ -328,7 +315,7 @@ public sealed class MainViewModel : ObservableObject
             SetSpotlight(number);
             RaiseEffect(DrawEffect.Tick);
             var progress = (double)step / steps;
-            await Task.Delay((int)(45 + 210 * progress * progress * progress));
+            await Task.Delay((int)(45 + 380 * progress * progress * progress * progress));
         }
     }
 

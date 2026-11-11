@@ -1,4 +1,4 @@
-using KawaiiBingo.ViewModels;
+﻿using KawaiiBingo.ViewModels;
 
 namespace KawaiiBingo.Tests;
 
@@ -19,9 +19,37 @@ public sealed class RiggedShowScriptTests
         Assert.AreEqual(5, choices.Count(pattern => pattern == RiggedShowPattern.Rainbow));
     }
 
-    /// <summary>どの演出も固有の効果を持ち、未抽選の候補だけを経て実際の結果に着地することを確認します。</summary>
+    /// <summary>いかさまの回数が0〜3回のすべてになりうることを確認します。</summary>
     [TestMethod]
-    public void EveryPatternUsesEligibleNumbersAndEndsAtTheWinner()
+    public void TrickCountRangesFromZeroToThree()
+    {
+        var counts = Enumerable.Range(0, 100)
+            .Select(value => RiggedShowScript.SelectTrickCount(new FixedRandom(value)))
+            .ToArray();
+
+        CollectionAssert.AreEquivalent(new[] { 0, 1, 2, 3 }, counts.Distinct().ToArray());
+    }
+
+    /// <summary>同じ抽選の中では、同じいかさまを繰り返さないことを確認します。</summary>
+    [TestMethod]
+    public void RandomScriptsNeverRepeatAPatternAndStayWithinThreeTricks()
+    {
+        var candidates = Enumerable.Range(1, 75).ToArray();
+        var seen = new HashSet<int>();
+        for (var seed = 0; seed < 300; seed++)
+        {
+            var script = RiggedShowScript.Create(candidates, 30, new Random(seed));
+            Assert.IsLessThanOrEqualTo(3, script.Patterns.Count);
+            Assert.AreEqual(script.Patterns.Count, script.Patterns.Distinct().Count());
+            seen.Add(script.Patterns.Count);
+        }
+
+        CollectionAssert.AreEquivalent(new[] { 0, 1, 2, 3 }, seen.ToArray());
+    }
+
+    /// <summary>どの演出の組み合わせも、ための後に急変し、未抽選の候補だけを経て実際の結果に着地することを確認します。</summary>
+    [TestMethod]
+    public void EveryPatternChainHoldsTwistsAndEndsAtTheWinner()
     {
         int[][] candidateSets =
         [
@@ -29,51 +57,65 @@ public sealed class RiggedShowScriptTests
             [2, 17, 29, 60, 75],
             [4, 75]
         ];
-        var firstEffects = new HashSet<DrawEffect?>();
+        var all = Enum.GetValues<RiggedShowPattern>();
+        var chains = new List<RiggedShowPattern[]> { Array.Empty<RiggedShowPattern>() };
+        chains.AddRange(all.Select(pattern => new[] { pattern }));
+        chains.AddRange(all.Select((pattern, index) => new[] { pattern, all[(index + 3) % all.Length], all[(index + 7) % all.Length] }));
+        var trickEffects = new HashSet<DrawEffect?>();
 
-        foreach (var pattern in Enum.GetValues<RiggedShowPattern>())
+        foreach (var chain in chains)
         {
             foreach (var candidates in candidateSets)
             {
                 foreach (var winner in candidates)
                 {
-                    var script = RiggedShowScript.Create(candidates, winner, new Random(winner), pattern);
-                    Assert.AreEqual(pattern, script.Pattern);
-                    Assert.IsNotNull(script.Decoy);
-                    Assert.AreNotEqual<int?>(winner, script.Decoy);
-                    Assert.Contains(script.Decoy.Value, candidates);
-                    Assert.AreEqual<int?>(winner, script.Steps[^1].Number);
+                    var script = RiggedShowScript.Create(candidates, winner, new Random(winner), chain);
+                    var expectedTricks = Math.Min(chain.Length, candidates.Length - 1);
+
+                    CollectionAssert.AreEqual(chain.Take(expectedTricks).ToArray(), script.Patterns.ToArray());
+                    Assert.HasCount(expectedTricks + 1, script.Stops);
+                    Assert.AreEqual(winner, script.Stops[^1]);
+                    Assert.IsTrue(script.Stops.Take(expectedTricks).All(stop => stop != winner && candidates.Contains(stop)));
+                    Assert.IsTrue(script.Stops.Zip(script.Stops.Skip(1)).All(pair => pair.First != pair.Second));
+                    Assert.AreEqual(expectedTricks + 1, script.Steps.Count(step => step.Effect == DrawEffect.FakeStop));
+                    Assert.AreEqual(expectedTricks, script.Steps.Count(step => step.Effect == DrawEffect.Twist));
+                    Assert.AreEqual<int?>(winner, script.Steps.Last(step => step.Number is not null).Number);
                     Assert.IsTrue(script.Steps.All(step => step.Number is null || candidates.Contains(step.Number.Value)));
                     Assert.IsTrue(script.Steps.All(step => step.DurationMilliseconds > 0));
-                    firstEffects.Add(script.Steps[0].Effect);
+                    Assert.IsFalse(script.Steps.SkipWhile(step => step.Effect != DrawEffect.FakeStop || step.Number != winner)
+                        .Any(step => step.Effect == DrawEffect.Twist || (step.Number is int number && number != winner)));
+                    trickEffects.UnionWith(script.Steps
+                        .SkipWhile(step => step.Effect != DrawEffect.Twist)
+                        .Skip(1)
+                        .Take(1)
+                        .Select(step => step.Effect));
                 }
             }
         }
 
-        Assert.AreEqual(10, firstEffects.Count);
-        Assert.IsFalse(firstEffects.Contains(null));
+        Assert.AreEqual(10, trickEffects.Count);
+        Assert.IsFalse(trickEffects.Contains(null));
     }
 
-    /// <summary>最後の一個でもおとりを捏造せず、十種類すべてを再生できることを確認します。</summary>
+    /// <summary>最後の一個ではおとりを捏造せず、いかさまなしで着地することを確認します。</summary>
     [TestMethod]
     public void LastNumberNeedsNoDecoy()
     {
         foreach (var pattern in Enum.GetValues<RiggedShowPattern>())
         {
-            var script = RiggedShowScript.Create(new[] { 42 }, 42, new Random(1), pattern);
+            var script = RiggedShowScript.Create(new[] { 42 }, 42, new Random(1), [pattern]);
 
-            Assert.IsNull(script.Decoy);
-            Assert.AreEqual<int?>(42, script.Steps[^1].Number);
+            Assert.IsEmpty(script.Patterns);
+            CollectionAssert.AreEqual(new[] { 42 }, script.Stops.ToArray());
             Assert.IsTrue(script.Steps.All(step => step.Number is null or 42));
         }
     }
-
     /// <summary>候補にない抽選結果から台本を作れないことを確認します。</summary>
     [TestMethod]
     public void WinnerMustBeAnEligibleCandidate()
     {
         Assert.ThrowsExactly<ArgumentException>(() =>
-            RiggedShowScript.Create(new[] { 3, 5 }, 7, new Random(1), RiggedShowPattern.Paw));
+            RiggedShowScript.Create(new[] { 3, 5 }, 7, new Random(1), [RiggedShowPattern.Paw]));
     }
 
     /// <summary>演出の抽選位置を固定するテスト用の乱数です。</summary>

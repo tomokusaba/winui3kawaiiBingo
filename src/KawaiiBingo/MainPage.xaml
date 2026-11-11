@@ -65,6 +65,103 @@
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+        <Storyboard x:Name="HeartbeatStoryboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="ScaleX">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1.06" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.22" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.34" Value="1.1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.62" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="ScaleY">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1.06" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.22" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.34" Value="1.1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.62" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HaloRing" Storyboard.TargetProperty="Opacity">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.34" Value="0.55" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimation Storyboard.TargetName="HaloScale" Storyboard.TargetProperty="ScaleX"
+                             From="0.92" To="1.14" Duration="0:0:0.8" />
+            <DoubleAnimation Storyboard.TargetName="HaloScale" Storyboard.TargetProperty="ScaleY"
+                             From="0.92" To="1.14" Duration="0:0:0.8" />
+        </Storyboard>
+        <Storyboard x:Name="FakeConfirmStoryboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="TranslateY">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.16" Value="-18">
+                    <EasingDoubleKeyFrame.EasingFunction><CubicEase EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction><BounceEase Bounces="2" Bounciness="3" EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimation Storyboard.TargetName="HaloRing" Storyboard.TargetProperty="Opacity"
+                             From="0.8" To="0" Duration="0:0:0.75" />
+            <DoubleAnimation Storyboard.TargetName="HaloScale" Storyboard.TargetProperty="ScaleX"
+                             From="0.85" To="1.25" Duration="0:0:0.75">
+                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="HaloScale" Storyboard.TargetProperty="ScaleY"
+                             From="0.85" To="1.25" Duration="0:0:0.75">
+                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecoyBadgeTransform" Storyboard.TargetProperty="ScaleX">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.6" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1.15">
+                    <EasingDoubleKeyFrame.EasingFunction><BackEase Amplitude="0.9" EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecoyBadgeTransform" Storyboard.TargetProperty="ScaleY">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.6" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1.15">
+                    <EasingDoubleKeyFrame.EasingFunction><BackEase Amplitude="0.9" EasingMode="EaseOut" /></EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="TwistStoryboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="Rotation">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.07" Value="14" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.16" Value="-12" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.26" Value="8" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.36" Value="-4" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.46" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="ScaleX">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.08" Value="1.14" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0.94" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BallTransform" Storyboard.TargetProperty="ScaleY">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.08" Value="0.86" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.06" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecoyBadgeTransform" Storyboard.TargetProperty="Rotation">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="-10" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.08" Value="12" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.18" Value="-18" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="-6" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.42" Value="-10" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecoyBadgeTransform" Storyboard.TargetProperty="ScaleX">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1.35" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="1.1" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecoyBadgeTransform" Storyboard.TargetProperty="ScaleY">
+                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1.35" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="1.1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
         <Storyboard x:Name="SneakStoryboard">
             <DoubleAnimation Storyboard.TargetName="DecoyBadge" Storyboard.TargetProperty="Opacity"
                              To="0" Duration="0:0:0.25" />
@@ -356,7 +453,7 @@
                                             <Border.RenderTransform>
                                                 <CompositeTransform x:Name="DecoyBadgeTransform" Rotation="-10" />
                                             </Border.RenderTransform>
-                                            <TextBlock Text="けってい…？" FontFamily="{StaticResource CuteJapaneseFont}"
+                                            <TextBlock x:Name="DecoyBadgeText" Text="けってい…？" FontFamily="{StaticResource CuteJapaneseFont}"
                                                        FontSize="13" Foreground="#9A6414" />
                                         </Border>
                                         <Grid x:Name="SneakyPaw" Opacity="0" Width="66" Height="66"

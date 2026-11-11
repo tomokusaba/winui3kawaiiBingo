@@ -12,6 +12,15 @@ public enum DrawEffect
     /// <summary>おとりの番号でぴたっと止まったときの揺れです。</summary>
     FakeStop,
 
+    /// <summary>止まった番号でどきどきと脈打つ、ための演出です。</summary>
+    Heartbeat,
+
+    /// <summary>決定したように見せる、ぬか喜びの演出です。</summary>
+    FakeConfirm,
+
+    /// <summary>決定と思わせた直後に、ようすが変わる急変の演出です。</summary>
+    Twist,
+
     /// <summary>うさぎがこっそり手を出し始めたときの合図です。</summary>
     SneakStart,
 

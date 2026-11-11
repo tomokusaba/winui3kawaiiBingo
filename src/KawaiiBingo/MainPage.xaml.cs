@@ -172,7 +172,23 @@ public sealed partial class MainPage : Page
                 break;
             case DrawEffect.FakeStop:
                 TickStoryboard.Stop();
+                StopSuspense();
+                DecoyBadgeText.Text = "けってい…？";
                 FakeStopStoryboard.Begin();
+                break;
+            case DrawEffect.Heartbeat:
+                StopSuspense();
+                HeartbeatStoryboard.Begin();
+                break;
+            case DrawEffect.FakeConfirm:
+                StopSuspense();
+                DecoyBadgeText.Text = "けってい♡";
+                FakeConfirmStoryboard.Begin();
+                break;
+            case DrawEffect.Twist:
+                StopSuspense();
+                DecoyBadgeText.Text = "！？";
+                TwistStoryboard.Begin();
                 break;
             case DrawEffect.SneakStart:
                 StartTrick(effect);
@@ -210,6 +226,8 @@ public sealed partial class MainPage : Page
     {
         TickStoryboard.Stop();
         FakeStopStoryboard.Stop();
+        StopSuspense();
+        DecoyBadgeText.Text = "けってい…？";
         SneakStoryboard.Stop();
         NudgeStoryboard.Stop();
         RevealStoryboard.Stop();
@@ -220,12 +238,24 @@ public sealed partial class MainPage : Page
         ConfettiLayer.Children.Clear();
     }
 
+    /// <summary>止まった番号での、ためと急変の演出を止めます。</summary>
+    private void StopSuspense()
+    {
+        HeartbeatStoryboard.Stop();
+        FakeConfirmStoryboard.Stop();
+        TwistStoryboard.Stop();
+    }
+
     /// <summary>選ばれたいたずらに合わせて小道具とボールを動かします。</summary>
     /// <param name="effect">再生するいたずらの効果です。</param>
     private void StartTrick(DrawEffect effect)
     {
         TickStoryboard.Stop();
         FakeStopStoryboard.Stop();
+        StopSuspense();
+        SneakStoryboard.Stop();
+        NudgeStoryboard.Stop();
+        DecoyBadgeText.Text = "けってい…？";
         _trickStoryboard?.Stop();
         _currentTrick = effect;
 
