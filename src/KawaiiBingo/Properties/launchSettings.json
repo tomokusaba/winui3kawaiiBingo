@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "KawaiiBingo (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "KawaiiBingo (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
